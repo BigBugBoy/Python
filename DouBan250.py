@@ -1,14 +1,39 @@
-from urllib.request import urlopen
+import requests
 from bs4 import BeautifulSoup
 import time
+from urllib.request import urlopen
+
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit 537.36 (KHTML, like Gecko)Chrome'}
+# headers = {
+#     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0"}
+session = requests.session()
+
+# adapter 适配器
+# MAX_RETRIES = 20
+# session = requests.Session()
+# adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+# session.mount('https://', adapter)
+# r = session.get(url)
 
 
 # 返回电影相关信息
-def movie_info(url):
-    h = urlopen(url)
-    soup = BeautifulSoup(h, "html.parser")
-    result = soup.find('div', {'id': "info"})
+def movie_info(page):
+    print('电影的主链接：%s' % page)
+    h = session.get(page, headers=headers)
+    soup = BeautifulSoup(h.text, "html.parser")
 
+    # h = urlopen(page)
+    # soup = BeautifulSoup(h, 'html.parser')
+
+    # 如果页面不存在，做异常处理 。   **********失败********
+    # print(soup)
+    # test = soup.find('title').get_text()
+    # if test == "页面不存在":
+    #     return "movie_athor", " movie_actor", "movie_year", "movie_class"
+
+    result = soup.find('div', {'id': "info"})
     movie_athor_list = []
     movie_actor_list = []
     movie_year_list = []
@@ -33,18 +58,26 @@ def movie_info(url):
     return movie_athor_list, movie_actor_list, movie_year_list, movie_class_list
 
 
+# def test_B(url):
+#     html = download_page(url)
+#     bsOBj = BeautifulSoup(html, 'html.parser')
+#     print(bsOBj)
+
 # 主函数
 def test_BeautifulSoup(url):
+    # html = urlopen(url)
+    # bsOBj = BeautifulSoup(html, 'html.parser')
 
+    html = session.get(url, headers=headers)
     # 利用bs4解析网页源代码
-    html = urlopen(url)
-    bsOBj = BeautifulSoup(html, 'html.parser')
+    bsOBj = BeautifulSoup(html.text, 'html.parser')
 
     # 检查编码是否一致
-    print(bsOBj.original_encoding)
+    # print(bsOBj.original_encoding)
     # 找到页面显示电影的模块
     result = bsOBj.find('ol', attrs={'class': "grid_view"})
-
+    # 验证页面源代码
+    # print(result)
     # 分别定义存储电影信息的列表
     # 名称
     movie_name_list = []
@@ -86,6 +119,7 @@ def test_BeautifulSoup(url):
         # 电影链接
         movie_href = movie_list.find('div', {'class': 'hd'}).find('a')['href']
         movie_href_list.append(movie_href)
+        # print(movie_href)
 
         # 电影排名，加入列表中
         movie_em = movie_list.find(
@@ -97,8 +131,26 @@ def test_BeautifulSoup(url):
             'span', {'class': 'rating_num'}).get_text()
         movie_star_list.append(movie_star)
 
-        # 电影制作信息
-        athor_list, actor_list, year_list, class_list = movie_info(movie_href)
+        # 验证当前页爬到的数据
+        print('当前正在爬取的电影是：%s' % movie_name)
+        download_pic(movie_pic, movie_name)
+        print('%s的海报图片保存成功' % movie_name)
+        print('*****************************************')
+
+        if movie_em in ('20', '27', '122', '123'):
+            athor_list.append('movie_athor')
+            actor_list.append('movie_actor')
+            year_list.append('movie_year')
+            class_list.append('movie_class')
+        else:
+            # 电影制作信息
+            movie_athor, movie_actor, movie_year, movie_class = movie_info(
+                movie_href)
+            athor_list.append(movie_athor)
+            actor_list.append(movie_actor)
+            year_list.append(movie_year)
+            class_list.append(movie_class)
+
         time.sleep(3)
 
         '''
@@ -137,16 +189,19 @@ def test_BeautifulSoup(url):
         #     print(movie_class)
 
     # 检查是否查找正确
-    print(movie_name_list)
-    print(movie_pic_list)
-    print(movie_inq_list)
-    print(movie_href_list)
-    print(movie_em_list)
-    print(movie_star_list)
-    print(athor_list)
-    print(actor_list)
-    print(year_list)
-    print(class_list)
+    for i in range(250):
+        print('*' * 100)
+        print("电影名称：%s" % movie_name_list[i])
+        print("电影海报链接：%s" % movie_pic_list[i])
+        print("电影豆瓣链接：%s" % movie_href_list[i])
+        print("电影排名：%s" % movie_em_list[i])
+        print("电影评分：%s" % movie_star_list[i])
+        print("电影标语：%s" % movie_inq_list[i])
+        print("导演：：%s" % athor_list[i])
+        print("电影演员：%s" % actor_list[i])
+        print("上映日期和地点：%s" % year_list[i])
+        print("电影类别：%s" % class_list[i])
+        print('*' * 100)
 
 
     # 找到属性class为'title'的标签为span的内容
@@ -157,17 +212,40 @@ def test_BeautifulSoup(url):
     # result = bsOBj.select('body>div>div>div>div>ol')
     # print(result)
 
+def download_pic(url, pic_name):  # 下载函数
+    name = 'E:\\MyProject\\Python\\DouBan250_pic\\' + pic_name + ".jpg"
+    if(url is None):  # 地址若为None则跳过
+        pass
+    result = urlopen(url)  # 打开链接
+    # print result.getcode()
+    if(result.getcode() != 200):  # 如果链接不正常，则跳过这个链接
+        pass
+    else:
+        data = result.read()  # 否则开始下载到本地
+        with open(name, "wb") as code:
+            code.write(data)
+            code.close()
+
 
 # 迭代遍历每一页
 def page():
-    url = 'https://movie.douban.com/top250?start='
     for i in range(10):
+        url = 'https://movie.douban.com/top250?start='
         url = url + ('%d' % (i * 25))
-        print(url)
-        print('*'*50)
-        print('爬到的第%d页的数据如下：' % (i+1))
+
+        print('*' * 100)
+        print('****************************************爬到的第%d页的数据如下：****************************************' % (i + 1))
+        print('*' * 100)
+
+        # 测试单个电影网页不存在的处理
+        # url = 'https://movie.douban.com/subject/5912992/'
+        # print(url)
+        # print(movie_info(url))
+
+        # 正常从主页开始爬
+        # print(url)
         test_BeautifulSoup(url)
-        print('*' * 50)
+
 
 
 # 计算爬虫运行时间
