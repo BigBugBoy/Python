@@ -131,7 +131,7 @@ def test_BeautifulSoup(url):
             'span', {'class': 'rating_num'}).get_text()
         movie_star_list.append(movie_star)
 
-        # 验证当前页爬到的数据
+        # 保存当前页爬到的图片
         print('当前正在爬取的电影是：%s' % movie_name)
         download_pic(movie_pic, movie_name)
         print('%s的海报图片保存成功' % movie_name)
@@ -188,20 +188,20 @@ def test_BeautifulSoup(url):
         #     print(movie_contry)
         #     print(movie_class)
 
-    # 检查是否查找正确
-    for i in range(250):
-        print('*' * 100)
-        print("电影名称：%s" % movie_name_list[i])
-        print("电影海报链接：%s" % movie_pic_list[i])
-        print("电影豆瓣链接：%s" % movie_href_list[i])
-        print("电影排名：%s" % movie_em_list[i])
-        print("电影评分：%s" % movie_star_list[i])
-        print("电影标语：%s" % movie_inq_list[i])
-        print("导演：：%s" % athor_list[i])
-        print("电影演员：%s" % actor_list[i])
-        print("上映日期和地点：%s" % year_list[i])
-        print("电影类别：%s" % class_list[i])
-        print('*' * 100)
+    # # 检查是否查找正确
+    # for i in range(250):
+    #     print('*' * 100)
+    #     print("电影名称：%s" % movie_name_list[i])
+    #     print("电影海报链接：%s" % movie_pic_list[i])
+    #     print("电影豆瓣链接：%s" % movie_href_list[i])
+    #     print("电影排名：%s" % movie_em_list[i])
+    #     print("电影评分：%s" % movie_star_list[i])
+    #     print("电影标语：%s" % movie_inq_list[i])
+    #     print("导演：：%s" % athor_list[i])
+    #     print("电影演员：%s" % actor_list[i])
+    #     print("上映日期和地点：%s" % year_list[i])
+    #     print("电影类别：%s" % class_list[i])
+    #     print('*' * 100)
 
 
     # 找到属性class为'title'的标签为span的内容
@@ -229,7 +229,7 @@ def download_pic(url, pic_name):  # 下载函数
 
 # 迭代遍历每一页
 def page():
-    for i in range(10):
+    for i in range(1, 10):
         url = 'https://movie.douban.com/top250?start='
         url = url + ('%d' % (i * 25))
 
