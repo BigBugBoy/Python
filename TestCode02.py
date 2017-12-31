@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Author  : BigBugBoy
+# @Software: PyCharm
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
-def getTile(url):
+
+'''bs4解析网页，通过“点”访问子节点'''
+
+def gettile(url):
     try:
         html = urlopen(url)
     except(HTTPError, URLError) as e:
@@ -14,7 +21,7 @@ def getTile(url):
     return title
 
 
-title = getTile("http://www.pythonscraping.com/pages/page1.html")
+title = gettile("http://www.pythonscraping.com/pages/page1.html")
 if title is None:
     print('Title could not be found')
 else:

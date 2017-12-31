@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Author  : BigBugBoy
+# @Software: PyCharm
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+
+'''使用bs4解析网页'''
+
 html=urlopen("http://www.pythonscraping.com/pages/page1.html")
-b=BeautifulSoup(html.read(),'html.parser')
+b=BeautifulSoup(html.read(), 'html.parser')
 # x=input('请输入：')
 # print(x)
 print('*'*20)

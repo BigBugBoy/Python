@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
+# @Author  : BigBugBoy
+# @Software: PyCharm
+
 import requests
 from lxml import etree
 import time
+
+'''第一次用lxml和requests写爬虫'''
+
 with open('E:/MyProject/Python/book250.csv', 'w', encoding='utf-8') as f:
     for a in range(10):
         url = 'https://book.douban.com/top250?start={}'.format(a * 25)

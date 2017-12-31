@@ -1,21 +1,19 @@
+# -*- coding: utf-8 -*-
+# @Author  : BigBugBoy
+# @Software: PyCharm
+
 import requests
 from bs4 import BeautifulSoup
 import time
 from urllib.request import urlopen
 
+'''第一次自己用bs4和request写爬虫'''
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit 537.36 (KHTML, like Gecko)Chrome'}
 # headers = {
 #     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0"}
 session = requests.session()
-
-# adapter 适配器
-# MAX_RETRIES = 20
-# session = requests.Session()
-# adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
-# session.mount('https://', adapter)
-# r = session.get(url)
 
 
 # 返回电影相关信息
@@ -58,22 +56,15 @@ def movie_info(page):
     return movie_athor_list, movie_actor_list, movie_year_list, movie_class_list
 
 
-# def test_B(url):
-#     html = download_page(url)
-#     bsOBj = BeautifulSoup(html, 'html.parser')
-#     print(bsOBj)
-
 # 主函数
 def test_BeautifulSoup(url):
-    # html = urlopen(url)
-    # bsOBj = BeautifulSoup(html, 'html.parser')
-
     html = session.get(url, headers=headers)
     # 利用bs4解析网页源代码
     bsOBj = BeautifulSoup(html.text, 'html.parser')
 
     # 检查编码是否一致
     # print(bsOBj.original_encoding)
+
     # 找到页面显示电影的模块
     result = bsOBj.find('ol', attrs={'class': "grid_view"})
     # 验证页面源代码
@@ -188,7 +179,8 @@ def test_BeautifulSoup(url):
         #     print(movie_contry)
         #     print(movie_class)
 
-    # # 检查是否查找正确
+
+    '''检查是否查找正确'''
     # for i in range(250):
     #     print('*' * 100)
     #     print("电影名称：%s" % movie_name_list[i])
@@ -245,7 +237,6 @@ def page():
         # 正常从主页开始爬
         # print(url)
         test_BeautifulSoup(url)
-
 
 
 # 计算爬虫运行时间
