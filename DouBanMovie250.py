@@ -7,6 +7,13 @@ from bs4 import BeautifulSoup
 import time
 from urllib.request import urlopen
 
+
+# import urllib.request
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+# response = urllib.request.urlopen('https://www.python.org')
+
+
 '''第一次自己用bs4和request写爬虫'''
 
 headers = {
@@ -107,7 +114,7 @@ def test_BeautifulSoup(url):
             'p', {'class': 'quote'}).find('span').get_text()
         movie_inq_list.append(movie_inq)
 
-        # 电影链接
+        # 电影链接s
         movie_href = movie_list.find('div', {'class': 'hd'}).find('a')['href']
         movie_href_list.append(movie_href)
         # print(movie_href)
@@ -181,19 +188,19 @@ def test_BeautifulSoup(url):
 
 
     '''检查是否查找正确'''
-    # for i in range(250):
-    #     print('*' * 100)
-    #     print("电影名称：%s" % movie_name_list[i])
-    #     print("电影海报链接：%s" % movie_pic_list[i])
-    #     print("电影豆瓣链接：%s" % movie_href_list[i])
-    #     print("电影排名：%s" % movie_em_list[i])
-    #     print("电影评分：%s" % movie_star_list[i])
-    #     print("电影标语：%s" % movie_inq_list[i])
-    #     print("导演：：%s" % athor_list[i])
-    #     print("电影演员：%s" % actor_list[i])
-    #     print("上映日期和地点：%s" % year_list[i])
-    #     print("电影类别：%s" % class_list[i])
-    #     print('*' * 100)
+    for i in range(250):
+        print('*' * 100)
+        print("电影名称：%s" % movie_name_list[i])
+        print("电影海报链接：%s" % movie_pic_list[i])
+        print("电影豆瓣链接：%s" % movie_href_list[i])
+        print("电影排名：%s" % movie_em_list[i])
+        print("电影评分：%s" % movie_star_list[i])
+        print("电影标语：%s" % movie_inq_list[i])
+        print("导演：：%s" % athor_list[i])
+        print("电影演员：%s" % actor_list[i])
+        print("上映日期和地点：%s" % year_list[i])
+        print("电影类别：%s" % class_list[i])
+        print('*' * 100)
 
 
     # 找到属性class为'title'的标签为span的内容
@@ -205,7 +212,9 @@ def test_BeautifulSoup(url):
     # print(result)
 
 def download_pic(url, pic_name):  # 下载函数
-    name = 'E:\\MyProject\\Python\\DouBan250_pic\\' + pic_name + ".jpg"
+    name = '/Users/wangwenjun/MyProject/Crawler/Test/' + pic_name + ".jpg"
+    print(url)
+    print(pic_name)
     if(url is None):  # 地址若为None则跳过
         pass
     result = urlopen(url)  # 打开链接
@@ -221,11 +230,11 @@ def download_pic(url, pic_name):  # 下载函数
 
 # 迭代遍历每一页
 def page():
-    for i in range(1, 10):
+    for i in range(0, 10):
         url = 'https://movie.douban.com/top250?start='
         url = url + ('%d' % (i * 25))
 
-        print('*' * 100)
+        print('\n\n'+'*' * 100)
         print('****************************************爬到的第%d页的数据如下：****************************************' % (i + 1))
         print('*' * 100)
 
@@ -241,13 +250,31 @@ def page():
 
 # 计算爬虫运行时间
 def timeup(func):
-    start = time.clock()
+    start = time.time
     func()
-    end = time.clock()
+    end = time.time
     timeuse = end - start
     print('\n[%s()]解析一共使用了%d秒时间。\n' % (func.__name__, timeuse))
     return timeuse
 
 
+
+
+def testUrlOpen():
+    url = 'https://img3.doubanio.com/view/photo/s_ratio_poster/public/p462657443.webp'
+    name = '/Users/wangwenjun/MyProject/Crawler/Test/' + '测试' + ".jpg"
+    if(url is None):  # 地址若为None则跳过
+        pass
+    result = urlopen(url)  # 打开链接
+    # print result.getcode()
+    if(result.getcode() != 200):  # 如果链接不正常，则跳过这个链接
+        pass
+    else:
+        data = result.read()  # 否则开始下载到本地
+        with open(name, "wb") as code:
+            code.write(data)
+            code.close()
+
 if __name__ == '__main__':
     timeup(page)
+    # testUrlOpen()
